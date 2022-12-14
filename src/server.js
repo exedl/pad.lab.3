@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
 const args = process.argv.slice(2);
-const port = !isNaN(args[0]) ? args[0] : 3000;
+const port = process.env.PORT || 3000;
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
