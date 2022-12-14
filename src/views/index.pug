@@ -1,0 +1,10 @@
+html
+  head
+    title SmartHome
+  body
+    h1 Welcome to SmartHome (server id#!{port})
+    h2 Devices
+    each device in devices
+        li= 'Name: ' + device.name + ', Location: ' + device.location
+            each measurement in device.measurements
+              li= measurement
