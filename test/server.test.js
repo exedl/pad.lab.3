@@ -6,7 +6,7 @@ describe('API Test',()=>{
     it('Sample test', (done) => {
         expect('ok').toBe('ok');
 
-        app.close();
+        //app.close();
 
         done();
     });
