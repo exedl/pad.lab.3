@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 
 const args = process.argv.slice(2);
-const port = args[0];
+const port = !isNaN(args[0]) ? args[0] : 3000;
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -27,6 +27,10 @@ const client = new cassandra.Client({
     localDataCenter: 'datacenter1',
     keyspace: 'smarthome'
   });
+
+app.get('/api', async(req, res) => {
+  res.send('ok');
+});
 
 app.put('/api', async(req, res) => {
   if (req.body.name === undefined || req.body.location === undefined) {
@@ -153,6 +157,8 @@ app.get('/', async(req, res) => {
   res.render('index', {port: port, devices: devices});
 });
 
-app.listen(port, () => {
+let server = app.listen(port, () => {
     console.log(`App listening on port ${port}`);
 });
+
+module.exports = server;
