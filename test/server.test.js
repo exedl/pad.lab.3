@@ -1,4 +1,4 @@
-const app = require('../src/server');
+//const app = require('../src/server');
 //request = require('supertest');
 let http = require('sync-request');
 
