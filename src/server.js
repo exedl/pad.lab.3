@@ -53,10 +53,10 @@ app.put('/api', async(req, res) => {
     var name = req.body.name;
     var location = req.body.location;
 
-    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [name]);
+    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [name], { consistency: cassandra.types.consistencies.localQuorum });
 
     if (query_device.rows.length == 0) {
-      await client.execute('INSERT INTO devices (name, location) VALUES (?, ?)', [name, location]);
+      await client.execute('INSERT INTO devices (name, location) VALUES (?, ?)', [name, location], { consistency: cassandra.types.consistencies.localQuorum });
 
       res.send({result: true});
     } else {
@@ -72,12 +72,12 @@ app.post('/api', async(req, res) => {
     var device = req.body.device;
     var data = req.body.data;
 
-    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device]);
+    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device], { consistency: cassandra.types.consistencies.localQuorum });
 
     var uid = device + '-' + Date.now() + '-' + data;
 
     if (query_device.rows.length > 0) {
-      await client.execute('INSERT INTO measurements (uid, device, data) VALUES (?, ?, ?)', [uid, device, data]);
+      await client.execute('INSERT INTO measurements (uid, device, data) VALUES (?, ?, ?)', [uid, device, data], { consistency: cassandra.types.consistencies.localQuorum });
       await redis_client.connect();
       await redis_client.set(device + '_m', '');
       await redis_client.disconnect();
@@ -95,10 +95,10 @@ app.delete('/api', async(req, res) => {
   } else {
     var device = req.body.device;
 
-    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device]);
+    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device], { consistency: cassandra.types.consistencies.localQuorum });
 
     if (query_device.rows.length > 0) {
-      await client.execute('DELETE FROM devices WHERE name = ?', [device]);
+      await client.execute('DELETE FROM devices WHERE name = ?', [device], { consistency: cassandra.types.consistencies.localQuorum });
 
       res.send({result: true});
     } else {
@@ -114,10 +114,10 @@ app.patch('/api', async(req, res) => {
     var device = req.body.device;
     var location = req.body.location;
 
-    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device]);
+    var query_device = await client.execute('SELECT name, location FROM devices WHERE name = ?', [device], { consistency: cassandra.types.consistencies.localQuorum });
 
     if (query_device.rows.length > 0) {
-      await client.execute('UPDATE devices SET location = ? WHERE name = ?', [location, device]);
+      await client.execute('UPDATE devices SET location = ? WHERE name = ?', [location, device], { consistency: cassandra.types.consistencies.localQuorum });
 
       res.send({result: true});
     } else {
@@ -127,7 +127,7 @@ app.patch('/api', async(req, res) => {
 });
 
 app.get('/', async(req, res) => {
-  var query_devices = await client.execute('SELECT name, location FROM devices');
+  var query_devices = await client.execute('SELECT name, location FROM devices', { consistency: cassandra.types.consistencies.localQuorum });
 
   var devices = {};
 
