@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const redis = require('redis');
 const app = express();
 const fs = require('fs');
+const md5 = require('md5');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -12,6 +13,8 @@ app.use(bodyParser.raw());
 
 const args = process.argv.slice(2);
 const port = process.env.PORT || 3000;
+
+const instance_id = md5(Math.floor(Math.random() * 1000));
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -168,7 +171,7 @@ app.get('/', async(req, res) => {
     }
   }
 
-  res.render('index', {port: port, devices: devices});
+  res.render('index', {port: instance_id, devices: devices});
 });
 
 let server = app.listen(port, () => {
