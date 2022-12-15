@@ -4,7 +4,7 @@ let http = require('sync-request');
 
 describe('API Test',()=>{
     it('Sample test', (done) => {
-        expect('ok').toBe('oks');
+        expect('ok').toBe('ok');
 
         //app.close();
 
